@@ -1,6 +1,6 @@
 // src/server.js
 const express = require('express');
-const { corsMiddleware, requestTelemetry } = require('./middleware/cors');
+const { corsMiddleware, requestTelemetry } = require('./middleware/core');
 const { errorHandler } = require('./middleware/errorHandler');
 const { validate, createProductSchema, updateProductSchema, productQuerySchema, productIdParamSchema } = require('./schemas/product.schema');
 const { getProducts } = require('./controllers/product.query');
