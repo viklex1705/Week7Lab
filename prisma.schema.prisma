@@ -1,0 +1,51 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Merchant {
+  id        String    @id @default(uuid())
+  name      String    @db.VarChar(120)
+  email     String    @unique @db.VarChar(150)
+  country   String    @default("US") @db.VarChar(2)
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([email])
+}
+
+model Product {
+  id          String        @id @default(uuid())
+  title       String        @db.VarChar(150)
+  description String?       @db.Text
+  price       Float
+  stock       Int           @default(0)
+  status      ProductStatus @default(DRAFT)
+  merchantId  String
+  merchant    Merchant      @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  tags        Tag[]         // Implicit M:N relation
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([merchantId])
+  @@index([status, price])
+}
+
+model Tag {
+  id        String    @id @default(uuid())
+  name      String    @unique @db.VarChar(50)
+  slug      String    @unique @db.VarChar(50)
+  products  Product[] // Tag <-> M:N relation
+  createdAt DateTime  @default(now())
+}
